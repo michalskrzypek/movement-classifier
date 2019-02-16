@@ -6,28 +6,20 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import pl.skrzypekmichal.movementclassifier.MovementType;
+import pl.skrzypekmichal.movementclassifier.enums.MovementType;
+import pl.skrzypekmichal.movementclassifier.neural_network_models.KerasModelImporter;
+import pl.skrzypekmichal.movementclassifier.neural_network_models.MovementClassifierModel;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
-    public MovementType chosenMovement = MovementType.STANDING;
+    public MovementType movementType = MovementType.STANDING;
     private TextView tvMovementType;
     private SensorManager sensorManager;
     private Sensor sensorAccelerometer;
@@ -49,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private void initializeView() {
         tvMovementType = findViewById(R.id.tv_movement_type);
+        tvMovementType.setText(movementType.getType());
     }
 
     private void initializeSensors() {
@@ -104,15 +97,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onResume();
     }
 
-    private String getRegisteredSensors() {
-        StringBuilder sb = new StringBuilder();
-        for (Sensor sensor : registeredSensors) {
-            sb.append(sensor.getName());
-            sb.append(System.getProperty("line.separator"));
-        }
-        return sb.toString();
-    }
-
     @Override
     public void onSensorChanged(SensorEvent event) {
         int sensorType = event.sensor.getType();
@@ -126,8 +110,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         if (dataCollector.isDataCollected()) {
+            updateMovementType();
             updateTextView();
+            dataCollector.clearSensorData();
         }
+    }
+
+    private void updateMovementType() {
+        movementType = movementClassifierModel.determineMovementType();
     }
 
     @Override
@@ -135,10 +125,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void updateTextView() {
-        String movementType = movementClassifierModel.determineMovementType().getType();
-        tvMovementType.setText(movementType);
-        dataCollector.clearSensorData();
+        tvMovementType.setText(movementType.getType());
     }
-
-
 }

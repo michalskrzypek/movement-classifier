@@ -1,13 +1,26 @@
-package pl.skrzypekmichal.movementclassifier;
+package pl.skrzypekmichal.movementclassifier.neural_network_models;
 
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+
+import pl.skrzypekmichal.movementclassifier.enums.MovementType;
 
 public class MovementClassifierModel {
 
     private MultiLayerNetwork model;
 
+    public MovementClassifierModel(){
+    }
+
     public MovementClassifierModel(MultiLayerNetwork multiLayerNetwork){
         model = multiLayerNetwork;
+    }
+
+    public void setModel(MultiLayerNetwork model) {
+        this.model = model;
+    }
+
+    public MultiLayerNetwork getModel() {
+        return model;
     }
 
     public MovementType determineMovementType() {

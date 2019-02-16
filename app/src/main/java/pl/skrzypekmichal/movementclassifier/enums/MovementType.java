@@ -1,4 +1,4 @@
-package pl.skrzypekmichal.movementclassifier;
+package pl.skrzypekmichal.movementclassifier.enums;
 
 public enum MovementType {
 
