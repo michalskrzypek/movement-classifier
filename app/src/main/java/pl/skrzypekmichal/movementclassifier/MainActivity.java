@@ -1,7 +1,6 @@
 package pl.skrzypekmichal.movementclassifier;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -12,21 +11,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
-import org.deeplearning4j.util.ModelGuesser;
-import org.deeplearning4j.util.ModelSerializer;
-import org.nd4j.linalg.io.ClassPathResource;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 import pl.skrzypekmichal.movementclassifier.enums.MovementType;
 import pl.skrzypekmichal.movementclassifier.neural_network_models.KerasModelImporter;
 import pl.skrzypekmichal.movementclassifier.neural_network_models.MovementClassifierModel;
 import pl.skrzypekmichal.movementclassifier.neural_network_models.SingleRowData;
-import pl.skrzypekmichal.movementclassifier.neural_network_models.features.SensorFeatures;
-import pl.skrzypekmichal.movementclassifier.neural_network_models.features.SensorFeaturesProcessor;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
+
+    public static final String MODEL_FILE_NAME = "multi_layer_network.zip";
 
     public MovementType movementType = MovementType.STANDING;
     private TextView tvMovementType;
@@ -58,21 +51,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void initializeNeuralNetworkModel() {
-        movementClassifierModel = new MovementClassifierModel();
-        InputStream modelInputStream = null;
-        AssetManager am = getAssets();
-        MultiLayerNetwork restored = null;
-
-        try {
-            modelInputStream = am.open("multi_layer_network.zip");
-            restored = ModelSerializer.restoreMultiLayerNetwork(modelInputStream);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        movementClassifierModel.setModel(restored);
-//        movementClassifierModel.setModel(KerasModelImporter.importModel(this, ""));
+        MultiLayerNetwork network = KerasModelImporter.importModel(this, MODEL_FILE_NAME);
+        movementClassifierModel = new MovementClassifierModel(network);
     }
 
     private void makeToast(String msg, int length) {

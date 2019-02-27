@@ -8,9 +8,6 @@ public class MovementClassifierModel {
 
     private MultiLayerNetwork model;
 
-    public MovementClassifierModel(){
-    }
-
     public MovementClassifierModel(MultiLayerNetwork multiLayerNetwork){
         model = multiLayerNetwork;
     }
