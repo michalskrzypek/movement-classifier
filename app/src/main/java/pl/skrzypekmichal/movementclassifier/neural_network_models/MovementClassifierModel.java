@@ -15,15 +15,15 @@ public class MovementClassifierModel {
         model = multiLayerNetwork;
     }
 
-    public void setModel(MultiLayerNetwork model) {
-        this.model = model;
-    }
-
     public MultiLayerNetwork getModel() {
         return model;
     }
 
-    public MovementType determineMovementType() {
+    public void setModel(MultiLayerNetwork model) {
+        this.model = model;
+    }
+
+    public MovementType predictMovementType(SingleRowData singleRowData) {
         //TODO calculate statistics on collected data
         //TODO Pass the calculated stats to the neural network model
         //TODO Using MovementType enum return the movement type

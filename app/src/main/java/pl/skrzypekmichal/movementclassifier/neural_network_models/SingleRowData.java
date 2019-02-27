@@ -1,31 +1,82 @@
 package pl.skrzypekmichal.movementclassifier.neural_network_models;
 
+import pl.skrzypekmichal.movementclassifier.RawDataCollector;
 import pl.skrzypekmichal.movementclassifier.neural_network_models.features.SensorFeatures;
+import pl.skrzypekmichal.movementclassifier.neural_network_models.features.SensorFeaturesProcessor;
 
 public class SingleRowData {
 
-    //TODO add statistics aka model features in a single row + getters + setters
-    private SensorFeatures accFeatures;
-    private SensorFeatures gyroFeatures;
+    private SensorFeatures accXFeatures;
+    private SensorFeatures accYFeatures;
+    private SensorFeatures accZFeatures;
+    private SensorFeatures gyroXFeatures;
+    private SensorFeatures gyroYFeatures;
+    private SensorFeatures gyroZFeatures;
 
-    public SingleRowData(SensorFeatures accFeatures, SensorFeatures gyroFeatures) {
-        this.accFeatures = accFeatures;
-        this.gyroFeatures = gyroFeatures;
+    public SingleRowData(RawDataCollector rawDataCollector){
+        accXFeatures = SensorFeaturesProcessor.getSensorFeatures(rawDataCollector.getAccX());
+        accYFeatures = SensorFeaturesProcessor.getSensorFeatures(rawDataCollector.getAccY());
+        accZFeatures = SensorFeaturesProcessor.getSensorFeatures(rawDataCollector.getAccZ());
+        gyroXFeatures = SensorFeaturesProcessor.getSensorFeatures(rawDataCollector.getGyroX());
+        gyroYFeatures = SensorFeaturesProcessor.getSensorFeatures(rawDataCollector.getGyroY());
+        gyroZFeatures = SensorFeaturesProcessor.getSensorFeatures(rawDataCollector.getGyroZ());
     }
 
-    public SensorFeatures getAccFeatures() {
-        return accFeatures;
+    public SingleRowData(SensorFeatures accXFeatures, SensorFeatures accYFeatures, SensorFeatures accZFeatures,
+                         SensorFeatures gyroXFeatures, SensorFeatures gyroYFeatures, SensorFeatures gyroZFeatures) {
+        this.accXFeatures = accXFeatures;
+        this.accYFeatures = accYFeatures;
+        this.accZFeatures = accZFeatures;
+        this.gyroXFeatures = gyroXFeatures;
+        this.gyroYFeatures = gyroYFeatures;
+        this.gyroZFeatures = gyroZFeatures;
     }
 
-    public void setAccFeatures(SensorFeatures accFeatures) {
-        this.accFeatures = accFeatures;
+    public SensorFeatures getAccXFeatures() {
+        return accXFeatures;
     }
 
-    public SensorFeatures getGyroFeatures() {
-        return gyroFeatures;
+    public void setAccXFeatures(SensorFeatures accXFeatures) {
+        this.accXFeatures = accXFeatures;
     }
 
-    public void setGyroFeatures(SensorFeatures gyroFeatures) {
-        this.gyroFeatures = gyroFeatures;
+    public SensorFeatures getAccYFeatures() {
+        return accYFeatures;
+    }
+
+    public void setAccYFeatures(SensorFeatures accYFeatures) {
+        this.accYFeatures = accYFeatures;
+    }
+
+    public SensorFeatures getAccZFeatures() {
+        return accZFeatures;
+    }
+
+    public void setAccZFeatures(SensorFeatures accZFeatures) {
+        this.accZFeatures = accZFeatures;
+    }
+
+    public SensorFeatures getGyroXFeatures() {
+        return gyroXFeatures;
+    }
+
+    public void setGyroXFeatures(SensorFeatures gyroXFeatures) {
+        this.gyroXFeatures = gyroXFeatures;
+    }
+
+    public SensorFeatures getGyroYFeatures() {
+        return gyroYFeatures;
+    }
+
+    public void setGyroYFeatures(SensorFeatures gyroYFeatures) {
+        this.gyroYFeatures = gyroYFeatures;
+    }
+
+    public SensorFeatures getGyroZFeatures() {
+        return gyroZFeatures;
+    }
+
+    public void setGyroZFeatures(SensorFeatures gyroZFeatures) {
+        this.gyroZFeatures = gyroZFeatures;
     }
 }

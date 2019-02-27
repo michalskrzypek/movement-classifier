@@ -7,20 +7,15 @@ public class SensorFeatures {
     private double min;
     private double max;
     private double std;
-    private double mean;
     private double rootMeanSquare;
 
-    public SensorFeatures() {
-    }
-
-    public SensorFeatures(double median, double average, double min, double max, double std, double mean, double rootMeanSquare) {
-        this.median = median;
-        this.average = average;
-        this.min = min;
-        this.max = max;
-        this.std = std;
-        this.mean = mean;
-        this.rootMeanSquare = rootMeanSquare;
+    private SensorFeatures(Builder builder) {
+        this.median = builder.median;
+        this.average = builder.average;
+        this.min = builder.min;
+        this.max = builder.max;
+        this.std = builder.std;
+        this.rootMeanSquare = builder.rootMeanSquare;
     }
 
     public double getMedian() {
@@ -63,19 +58,55 @@ public class SensorFeatures {
         this.std = std;
     }
 
-    public double getMean() {
-        return mean;
-    }
-
-    public void setMean(double mean) {
-        this.mean = mean;
-    }
-
     public double getRootMeanSquare() {
         return rootMeanSquare;
     }
 
     public void setRootMeanSquare(double rootMeanSquare) {
         this.rootMeanSquare = rootMeanSquare;
+    }
+
+    public static class Builder {
+
+        private double median;
+        private double average;
+        private double min;
+        private double max;
+        private double std;
+        private double rootMeanSquare;
+
+        public SensorFeatures build() {
+            return new SensorFeatures(this);
+        }
+
+        public Builder median(double median) {
+            this.median = median;
+            return this;
+        }
+
+        public Builder average(double average) {
+            this.average = average;
+            return this;
+        }
+
+        public Builder min(double min) {
+            this.min = min;
+            return this;
+        }
+
+        public Builder max(double max) {
+            this.max = max;
+            return this;
+        }
+
+        public Builder std(double std) {
+            this.std = std;
+            return this;
+        }
+
+        public Builder rootMeanSquare(double rootMeanSquare){
+            this.rootMeanSquare = rootMeanSquare;
+            return this;
+        }
     }
 }

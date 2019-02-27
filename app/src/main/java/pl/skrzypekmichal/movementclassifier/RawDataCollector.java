@@ -3,7 +3,7 @@ package pl.skrzypekmichal.movementclassifier;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataCollector {
+public class RawDataCollector {
 
     public static final int WINDOW_SAMPLES = 24; //stands for ~2 sec. using delay of SENSOR_DELAY_NORMAL
     private List<Float> accX;
@@ -13,7 +13,7 @@ public class DataCollector {
     private List<Float> gyroY;
     private List<Float> gyroZ;
 
-    public DataCollector() {
+    public RawDataCollector() {
         accX = new ArrayList<Float>();
         accY = new ArrayList<Float>();
         accZ = new ArrayList<Float>();
@@ -53,5 +53,29 @@ public class DataCollector {
             return true;
         }
         return false;
+    }
+
+    public List<Float> getAccX() {
+        return accX;
+    }
+
+    public List<Float> getAccY() {
+        return accY;
+    }
+
+    public List<Float> getAccZ() {
+        return accZ;
+    }
+
+    public List<Float> getGyroX() {
+        return gyroX;
+    }
+
+    public List<Float> getGyroY() {
+        return gyroY;
+    }
+
+    public List<Float> getGyroZ() {
+        return gyroZ;
     }
 }

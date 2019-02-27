@@ -1,6 +1,7 @@
 package pl.skrzypekmichal.movementclassifier;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -10,12 +11,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.util.ModelGuesser;
+import org.deeplearning4j.util.ModelSerializer;
+import org.nd4j.linalg.io.ClassPathResource;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import pl.skrzypekmichal.movementclassifier.enums.MovementType;
 import pl.skrzypekmichal.movementclassifier.neural_network_models.KerasModelImporter;
 import pl.skrzypekmichal.movementclassifier.neural_network_models.MovementClassifierModel;
+import pl.skrzypekmichal.movementclassifier.neural_network_models.SingleRowData;
+import pl.skrzypekmichal.movementclassifier.neural_network_models.features.SensorFeatures;
+import pl.skrzypekmichal.movementclassifier.neural_network_models.features.SensorFeaturesProcessor;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -24,9 +33,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private SensorManager sensorManager;
     private Sensor sensorAccelerometer;
     private Sensor sensorGyroscope;
-    private DataCollector dataCollector;
+    private RawDataCollector dataCollector;
     private MovementClassifierModel movementClassifierModel;
-    private List<Sensor> registeredSensors;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +43,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         initializeView();
         initializeSensors();
         initializeNeuralNetworkModel();
-        dataCollector = new DataCollector();
-        registeredSensors = new ArrayList<>();
+        dataCollector = new RawDataCollector();
     }
 
     private void initializeView() {
@@ -50,13 +57,27 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         sensorGyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
     }
 
-    private void initializeNeuralNetworkModel(){
+    private void initializeNeuralNetworkModel() {
         movementClassifierModel = new MovementClassifierModel();
-        movementClassifierModel.setModel(KerasModelImporter.importModel(this, "movement_classification_model.h5"));
+        InputStream modelInputStream = null;
+        AssetManager am = getAssets();
+        MultiLayerNetwork restored = null;
+
+        try {
+            modelInputStream = am.open("multi_layer_network.zip");
+            restored = ModelSerializer.restoreMultiLayerNetwork(modelInputStream);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        movementClassifierModel.setModel(restored);
+//        movementClassifierModel.setModel(KerasModelImporter.importModel(this, ""));
     }
 
     private void makeToast(String msg, int length) {
         Toast.makeText(this, msg, length).show();
+
     }
 
     /**
@@ -71,14 +92,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (sensorAccelerometer != null) {
             sensorManager.registerListener(this, sensorAccelerometer,
                     SensorManager.SENSOR_DELAY_NORMAL);
-
-            registeredSensors.add(sensorAccelerometer);
         }
         if (sensorGyroscope != null) {
             sensorManager.registerListener(this, sensorGyroscope,
                     SensorManager.SENSOR_DELAY_NORMAL);
-
-            registeredSensors.add(sensorGyroscope);
         }
     }
 
@@ -87,9 +104,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onStop();
         sensorManager.unregisterListener(this, sensorAccelerometer);
         sensorManager.unregisterListener(this, sensorGyroscope);
-
-        registeredSensors.remove(sensorAccelerometer);
-        registeredSensors.remove(sensorGyroscope);
     }
 
     @Override
@@ -117,7 +131,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void updateMovementType() {
-        movementType = movementClassifierModel.determineMovementType();
+        SingleRowData singleRowData = new SingleRowData(dataCollector);
+        movementType = movementClassifierModel.predictMovementType(singleRowData);
     }
 
     @Override
