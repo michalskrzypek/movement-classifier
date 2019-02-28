@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.joda.time.LocalDateTime;
 
 import pl.skrzypekmichal.movementclassifier.enums.MovementType;
 import pl.skrzypekmichal.movementclassifier.neural_network_models.KerasModelImporter;
@@ -19,7 +20,7 @@ import pl.skrzypekmichal.movementclassifier.neural_network_models.SingleRowData;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
-    public static final String MODEL_FILE_NAME = "multi_layer_network.zip";
+    public static final String MODEL_FILE_NAME = "MultiLayerNetworkWithReducedFeatures.zip";
 
     public MovementType movementType = MovementType.STANDING;
     private TextView tvMovementType;

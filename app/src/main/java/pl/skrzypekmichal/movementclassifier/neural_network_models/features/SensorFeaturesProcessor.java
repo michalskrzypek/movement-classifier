@@ -1,22 +1,22 @@
 package pl.skrzypekmichal.movementclassifier.neural_network_models.features;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import pl.skrzypekmichal.movementclassifier.RawDataCollector;
 
 /**
  * Takes raw data and creates SensorFeatures out of it
  */
 public class SensorFeaturesProcessor {
 
-    public static SensorFeatures getSensorFeatures(List<Float> sensorData) {
+    public static SensorFeatures calculateSensorFeatures(List<Float> sensorData) {
         double average = calculateAverage(sensorData);
         double median = calculateMedian(sensorData);
         double min = calculateMin(sensorData);
         double max = calculateMax(sensorData);
         double std = calculateStd(sensorData);
         double rms = calculateRootMeanSquare(sensorData);
+        double mad = calculateMad(sensorData);
 
         return new SensorFeatures.Builder()
                 .average(average)
@@ -25,7 +25,22 @@ public class SensorFeaturesProcessor {
                 .min(min)
                 .std(std)
                 .rootMeanSquare(rms)
+                .mad(mad)
                 .build();
+    }
+
+    private static double calculateMad(List<Float> sensorData) {
+        double median = calculateMedian(sensorData);
+        List<Double> medianDeviations = arrayAbsDistance(sensorData, median);
+        return calculateMedianOfDoubles(medianDeviations);
+    }
+
+    private static List<Double> arrayAbsDistance(List<Float> sensorData, Double median) {
+        List<Double> medianDeviations = new ArrayList<>();
+        for (int i=0; i<sensorData.size(); i++) {
+            medianDeviations.add(Math.abs(sensorData.get(i) - median));
+        }
+        return medianDeviations;
     }
 
     private static double calculateRootMeanSquare(List<Float> sensorData) {
@@ -68,7 +83,20 @@ public class SensorFeaturesProcessor {
     }
 
     private static double calculateMedian(List<Float> sensorData) {
-        int numbOfSamples = RawDataCollector.WINDOW_SAMPLES;
+        int numbOfSamples = sensorData.size();
+        int indexOfMedian = numbOfSamples / 2;
+        double median;
+
+        if (numbOfSamples % 2 == 0) {
+            median = (sensorData.get(indexOfMedian) + sensorData.get(indexOfMedian - 1)) / (double) 2;
+        } else {
+            median = sensorData.get(indexOfMedian);
+        }
+        return median;
+    }
+
+    private static double calculateMedianOfDoubles(List<Double> sensorData) {
+        int numbOfSamples = sensorData.size();
         int indexOfMedian = numbOfSamples / 2;
         double median;
 

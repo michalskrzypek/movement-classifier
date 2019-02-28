@@ -8,6 +8,7 @@ public class SensorFeatures {
     private double max;
     private double std;
     private double rootMeanSquare;
+    private double mad; //median absolute deviation
 
     private SensorFeatures(Builder builder) {
         this.median = builder.median;
@@ -66,6 +67,14 @@ public class SensorFeatures {
         this.rootMeanSquare = rootMeanSquare;
     }
 
+    public double getMad() {
+        return mad;
+    }
+
+    public void setMad(double mad) {
+        this.mad = mad;
+    }
+
     public static class Builder {
 
         private double median;
@@ -74,6 +83,7 @@ public class SensorFeatures {
         private double max;
         private double std;
         private double rootMeanSquare;
+        private double mad;
 
         public SensorFeatures build() {
             return new SensorFeatures(this);
@@ -106,6 +116,11 @@ public class SensorFeatures {
 
         public Builder rootMeanSquare(double rootMeanSquare){
             this.rootMeanSquare = rootMeanSquare;
+            return this;
+        }
+
+        public Builder mad(double mad){
+            this.mad = mad;
             return this;
         }
     }
