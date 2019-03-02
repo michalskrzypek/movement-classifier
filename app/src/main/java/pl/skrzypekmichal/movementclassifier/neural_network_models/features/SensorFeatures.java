@@ -1,5 +1,8 @@
 package pl.skrzypekmichal.movementclassifier.neural_network_models.features;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SensorFeatures {
 
     private double median;
@@ -17,6 +20,7 @@ public class SensorFeatures {
         this.max = builder.max;
         this.std = builder.std;
         this.rootMeanSquare = builder.rootMeanSquare;
+        this.mad = builder.mad;
     }
 
     public double getMedian() {

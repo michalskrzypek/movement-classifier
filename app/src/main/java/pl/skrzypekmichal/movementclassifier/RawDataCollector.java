@@ -66,13 +66,17 @@ public class RawDataCollector {
     }
 
     private boolean isEnoughSensorData(Map<LocalDateTime, Float> sensorData) {
-        LocalDateTime firstObservationTime = Collections.min(sensorData.keySet());
-        LocalDateTime lastObservationTime = Collections.max(sensorData.keySet());
+        if(!sensorData.isEmpty()){
+            LocalDateTime firstObservationTime = Collections.min(sensorData.keySet());
+            LocalDateTime lastObservationTime = Collections.max(sensorData.keySet());
 
-        long differenceInMilliseconds = lastObservationTime.toDate().getTime() - firstObservationTime.toDate().getTime();
-        if (differenceInMilliseconds >= WINDOW_WIDTH_IN_SECONDS * 1000) {
-            return true;
+            long differenceInMilliseconds = lastObservationTime.toDate().getTime() - firstObservationTime.toDate().getTime();
+            if (differenceInMilliseconds >= WINDOW_WIDTH_IN_SECONDS * 1000) {
+                return true;
+            }
+            return false;
         }
+
         return false;
     }
 

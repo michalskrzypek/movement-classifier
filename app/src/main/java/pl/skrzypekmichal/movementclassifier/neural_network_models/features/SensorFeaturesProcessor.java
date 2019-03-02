@@ -83,27 +83,33 @@ public class SensorFeaturesProcessor {
     }
 
     private static double calculateMedian(List<Float> sensorData) {
-        int numbOfSamples = sensorData.size();
+        List<Float> sortedSensorData = sensorData.subList(0, sensorData.size());
+        Collections.sort(sortedSensorData);
+
+        int numbOfSamples = sortedSensorData.size();
         int indexOfMedian = numbOfSamples / 2;
         double median;
 
         if (numbOfSamples % 2 == 0) {
-            median = (sensorData.get(indexOfMedian) + sensorData.get(indexOfMedian - 1)) / (double) 2;
+            median = (sortedSensorData.get(indexOfMedian) + sortedSensorData.get(indexOfMedian - 1)) / (double) 2;
         } else {
-            median = sensorData.get(indexOfMedian);
+            median = sortedSensorData.get(indexOfMedian);
         }
         return median;
     }
 
     private static double calculateMedianOfDoubles(List<Double> sensorData) {
-        int numbOfSamples = sensorData.size();
+        List<Double> sortedSensorData = sensorData.subList(0, sensorData.size());
+        Collections.sort(sortedSensorData);
+
+        int numbOfSamples = sortedSensorData.size();
         int indexOfMedian = numbOfSamples / 2;
         double median;
 
         if (numbOfSamples % 2 == 0) {
-            median = (sensorData.get(indexOfMedian) + sensorData.get(indexOfMedian - 1)) / (double) 2;
+            median = (sortedSensorData.get(indexOfMedian) + sortedSensorData.get(indexOfMedian - 1)) / (double) 2;
         } else {
-            median = sensorData.get(indexOfMedian);
+            median = sortedSensorData.get(indexOfMedian);
         }
         return median;
     }
@@ -111,8 +117,8 @@ public class SensorFeaturesProcessor {
     private static double calculateAverage(List<Float> sensorData) {
         double sum = 0;
         for (Float f : sensorData) {
-            sum += f;
+            sum += (double) f;
         }
-        return sum / sensorData.size();
+        return sum / (double) sensorData.size();
     }
 }

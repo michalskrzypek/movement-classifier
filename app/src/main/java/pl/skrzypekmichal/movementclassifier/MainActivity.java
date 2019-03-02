@@ -11,11 +11,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
-import org.joda.time.LocalDateTime;
 
 import pl.skrzypekmichal.movementclassifier.enums.MovementType;
 import pl.skrzypekmichal.movementclassifier.neural_network_models.KerasModelImporter;
-import pl.skrzypekmichal.movementclassifier.neural_network_models.MovementClassifierModel;
+import pl.skrzypekmichal.movementclassifier.neural_network_models.MovementClassifier;
 import pl.skrzypekmichal.movementclassifier.neural_network_models.SingleRowData;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
@@ -28,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Sensor sensorAccelerometer;
     private Sensor sensorGyroscope;
     private RawDataCollector dataCollector;
-    private MovementClassifierModel movementClassifierModel;
+    private MovementClassifier movementClassifierModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private void initializeNeuralNetworkModel() {
         MultiLayerNetwork network = KerasModelImporter.importModel(this, MODEL_FILE_NAME);
-        movementClassifierModel = new MovementClassifierModel(network);
+        movementClassifierModel = new MovementClassifier(network);
     }
 
     private void makeToast(String msg, int length) {
