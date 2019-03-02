@@ -107,14 +107,14 @@ public class RawDataCollector {
     public List<Float> getWindowedValues(LinkedHashMap<LocalDateTime, Float> sensorData) {
         List<Float> window = new ArrayList<>();
 
-        LocalDateTime firstObservationTime = sensorData.keySet().iterator().next();
+        LocalDateTime firstObservationTime = Collections.min(sensorData.keySet());
         int secondOfWindow = firstObservationTime.getSecondOfMinute();
 
         List<LocalDateTime> timestamps = sensorData.keySet().stream()
                 .filter(ldt -> ldt.getSecondOfMinute() == secondOfWindow)
+                .sorted()
                 .collect(Collectors.toList());
 
-        Collections.sort(timestamps);
         for (int i = 0; i < timestamps.size(); i++) {
             window.add(sensorData.get(timestamps.get(i)));
         }

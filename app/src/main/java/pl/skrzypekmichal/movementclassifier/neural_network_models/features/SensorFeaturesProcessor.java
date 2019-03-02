@@ -71,7 +71,7 @@ public class SensorFeaturesProcessor {
             standardDeviation += Math.pow(num - mean, 2);
         }
 
-        return Math.sqrt(standardDeviation / length);
+        return Math.sqrt(standardDeviation / (double) length);
     }
 
     private static double calculateMin(List<Float> sensorData) {
