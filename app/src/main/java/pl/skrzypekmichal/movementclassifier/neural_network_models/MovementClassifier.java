@@ -54,7 +54,7 @@ public class MovementClassifier {
         //TODO Using MovementType enum return the movement type
         int[] movementType = model.predict(features);
         Log.d("MOVEMENT", "predictMovementType: " + Arrays.toString(movementType));
-        return MovementType.WALKING;
+        return MovementType.getByIndex(movementType[0]);
 
     }
 }
