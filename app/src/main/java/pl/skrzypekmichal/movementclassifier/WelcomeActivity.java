@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import pl.skrzypekmichal.movementclassifier.sensor_data_collector.DataCollectorActivity;
+
 public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int REQUEST_CODE_UNKNOWN = 0;
@@ -34,14 +36,11 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         Intent i = null;
-        int requestCode = REQUEST_CODE_UNKNOWN;
         if (v == btnClassifier) {
             i = new Intent(this, ClassifierActivity.class);
-            requestCode = REQUEST_CODE_CLASSIFY;
         } else if (v == btnCollectData) {
-            i = new Intent(this, ClassifierActivity.class);
-            requestCode = REQUEST_CODE_COLLECT;
+            i = new Intent(this, DataCollectorActivity.class);
         }
-        startActivityForResult(i, requestCode);
+        startActivity(i);
     }
 }

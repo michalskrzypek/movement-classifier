@@ -10,4 +10,18 @@
     <string name="btn_collect_data">Collect Data</string>
     <string name="btn_classify_movement">Classify movement</string>
     <string name="app_title">Movement classifier</string>
+
+    <string name="error_no_sensor">No sensor</string>
+    <string name="label_acc">Linear Accelerometer Sensor:</string>
+    <string name="acc_x">X : %1$.2f</string>
+    <string name="acc_y">Y : %1$.2f</string>
+    <string name="acc_z">Z : %1$.2f</string>
+    <string name="label_gyro">Gyroscope Sensor: %1$.2f</string>
+
+    <string name="movement_prompt">Wybierz rodzaj ruchu:</string>
+
+    <string name="start_button">Start</string>
+    <string name="stop_button">Stop</string>
+    <string name="hint_username">Enter your name</string>
+    <string name="header">Sensor Data Collector</string>
 </resources>

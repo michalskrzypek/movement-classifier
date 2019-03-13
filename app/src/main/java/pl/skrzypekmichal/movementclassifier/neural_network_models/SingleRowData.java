@@ -16,12 +16,12 @@ public class SingleRowData {
     private SensorFeatures gyroZFeatures;
 
     public SingleRowData(RawDataCollector rawDataCollector){
-        accXFeatures = SensorFeaturesProcessor.calculateSensorFeatures(rawDataCollector.getWindowedValues((LinkedHashMap) rawDataCollector.getAccX()));
-        accYFeatures = SensorFeaturesProcessor.calculateSensorFeatures(rawDataCollector.getWindowedValues((LinkedHashMap) rawDataCollector.getAccY()));
-        accZFeatures = SensorFeaturesProcessor.calculateSensorFeatures(rawDataCollector.getWindowedValues((LinkedHashMap) rawDataCollector.getAccZ()));
-        gyroXFeatures = SensorFeaturesProcessor.calculateSensorFeatures(rawDataCollector.getWindowedValues((LinkedHashMap) rawDataCollector.getGyroX()));
-        gyroYFeatures= SensorFeaturesProcessor.calculateSensorFeatures(rawDataCollector.getWindowedValues((LinkedHashMap) rawDataCollector.getGyroY()));
-        gyroZFeatures = SensorFeaturesProcessor.calculateSensorFeatures(rawDataCollector.getWindowedValues((LinkedHashMap) rawDataCollector.getGyroZ()));
+        accXFeatures = SensorFeaturesProcessor.calculateSensorFeatures(rawDataCollector.getWindowedValues((LinkedHashMap<org.joda.time.LocalDateTime, Float>) rawDataCollector.getAccX()));
+        accYFeatures = SensorFeaturesProcessor.calculateSensorFeatures(rawDataCollector.getWindowedValues((LinkedHashMap<org.joda.time.LocalDateTime, Float>) rawDataCollector.getAccY()));
+        accZFeatures = SensorFeaturesProcessor.calculateSensorFeatures(rawDataCollector.getWindowedValues((LinkedHashMap<org.joda.time.LocalDateTime, Float>) rawDataCollector.getAccZ()));
+        gyroXFeatures = SensorFeaturesProcessor.calculateSensorFeatures(rawDataCollector.getWindowedValues((LinkedHashMap<org.joda.time.LocalDateTime, Float>) rawDataCollector.getGyroX()));
+        gyroYFeatures= SensorFeaturesProcessor.calculateSensorFeatures(rawDataCollector.getWindowedValues((LinkedHashMap<org.joda.time.LocalDateTime, Float>) rawDataCollector.getGyroY()));
+        gyroZFeatures = SensorFeaturesProcessor.calculateSensorFeatures(rawDataCollector.getWindowedValues((LinkedHashMap<org.joda.time.LocalDateTime, Float>) rawDataCollector.getGyroZ()));
     }
 
     public SingleRowData(SensorFeatures accXFeatures, SensorFeatures accYFeatures, SensorFeatures accZFeatures,
