@@ -21,7 +21,7 @@ import pl.skrzypekmichal.movementclassifier.neural_network_models.KerasModelImpo
 import pl.skrzypekmichal.movementclassifier.neural_network_models.MovementClassifier;
 import pl.skrzypekmichal.movementclassifier.neural_network_models.SingleRowData;
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener {
+public class ClassifierActivity extends AppCompatActivity implements SensorEventListener {
 
     public static final String MODEL_FILE_NAME = "MultiLayerNetworkWithReducedFeatures.zip";
 
