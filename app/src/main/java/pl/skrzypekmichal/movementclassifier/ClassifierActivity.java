@@ -1,16 +1,20 @@
 package pl.skrzypekmichal.movementclassifier;
 
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,14 +30,20 @@ public class ClassifierActivity extends AppCompatActivity implements SensorEvent
     public static final String MODEL_FILE_NAME = "MultiLayerNetworkWithReducedFeatures.zip";
 
     public MovementType movementType = MovementType.STANDING;
+
+    private boolean collecting;
+
     private TextView tvMovementType;
+    private Button btnClassify;
+    private DrawerLayout drawer;
+    private NavigationView navigationView;
+
     private SensorManager sensorManager;
     private Sensor sensorAccelerometer;
     private Sensor sensorGyroscope;
+
     private RawDataCollector dataCollector;
     private MovementClassifier movementClassifierModel;
-
-    private DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +53,13 @@ public class ClassifierActivity extends AppCompatActivity implements SensorEvent
         initializeSensors();
         initializeNeuralNetworkModel();
         initializeDrawerMenu();
+        initializeNavigation();
 
         dataCollector = new RawDataCollector();
     }
 
 
-    private void initializeDrawerMenu(){
+    private void initializeDrawerMenu() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -60,9 +71,50 @@ public class ClassifierActivity extends AppCompatActivity implements SensorEvent
         toggle.syncState();
     }
 
+    private void initializeNavigation() {
+        navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(menuItem -> {
+            int id = menuItem.getItemId();
+            return onNavItemClick(id);
+        });
+    }
+
+    private boolean onNavItemClick(int itemId) {
+        switch (itemId) {
+            case R.id.nav_home:
+                Intent i = new Intent(this, WelcomeActivity.class);
+                finish();
+                startActivity(i);
+                break;
+        }
+        return true;
+    }
+
     private void initializeView() {
         tvMovementType = findViewById(R.id.tv_movement_type);
         tvMovementType.setText(movementType.getType());
+        btnClassify = findViewById(R.id.btn_classify);
+        btnClassify.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_start));
+        btnClassify.setOnClickListener(v -> {
+            if (collecting) {
+                stopRecording();
+            } else {
+                startCollecting();
+            }
+        });
+    }
+
+    private void startCollecting() {
+        collecting = true;
+        btnClassify.setText(R.string.stop_button);
+        btnClassify.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_stop));
+    }
+
+    private void stopRecording() {
+        collecting = false;
+        dataCollector.clearSensorData();
+        btnClassify.setText(R.string.btn_classify);
+        btnClassify.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_start));
     }
 
     private void initializeSensors() {
@@ -114,20 +166,22 @@ public class ClassifierActivity extends AppCompatActivity implements SensorEvent
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        int sensorType = event.sensor.getType();
-        switch (sensorType) {
-            case Sensor.TYPE_LINEAR_ACCELERATION:
-                dataCollector.addAccData(event.values);
-                break;
-            case Sensor.TYPE_GYROSCOPE:
-                dataCollector.addGyroData(event.values);
-                break;
-        }
+        if (collecting) {
+            int sensorType = event.sensor.getType();
+            switch (sensorType) {
+                case Sensor.TYPE_LINEAR_ACCELERATION:
+                    dataCollector.addAccData(event.values);
+                    break;
+                case Sensor.TYPE_GYROSCOPE:
+                    dataCollector.addGyroData(event.values);
+                    break;
+            }
 
-        if (dataCollector.isDataCollected()) {
-            updateMovementType();
-            updateTextView();
-            dataCollector.clearSensorData();
+            if (dataCollector.isDataCollected()) {
+                updateMovementType();
+                updateTextView();
+                dataCollector.clearSensorData();
+            }
         }
     }
 

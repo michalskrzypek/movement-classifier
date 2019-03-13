@@ -7,7 +7,10 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -36,6 +39,7 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
     private Button btnRecord;
     private Spinner spWalkType;
     private TextView tvSensors;
+    private DrawerLayout drawer;
 
     private SensorManager sensorManager;
     private Sensor sensorAccelerometer;
@@ -52,11 +56,23 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
         setContentView(R.layout.activity_data_collector);
         initializeView();
         initializeSensors();
-
+        initializeDrawerMenu();
         accData = new ArrayList<>();
         timestamps = new ArrayList<>();
         registeredSensors = new ArrayList<>();
         dataRecorder = new DataRecorder();
+    }
+
+    private void initializeDrawerMenu(){
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        drawer = findViewById(R.id.drawer_layout);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
     }
 
     private void initializeView() {

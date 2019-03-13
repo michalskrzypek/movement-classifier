@@ -8,10 +8,10 @@
     tools:context=".ClassifierActivity"
     tools:openDrawer="start">
 
+    <include layout="@layout/fragment_classifier" />
+
     <include layout="@layout/nav_drawer_toolbar" />
 
     <include layout="@layout/nav_drawer_view" />
-
-    <include layout="@layout/fragment_classifier" />
 
 </android.support.v4.widget.DrawerLayout>
