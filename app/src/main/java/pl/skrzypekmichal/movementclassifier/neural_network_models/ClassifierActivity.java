@@ -22,6 +22,7 @@ import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 
 import pl.skrzypekmichal.movementclassifier.HomeActivity;
 import pl.skrzypekmichal.movementclassifier.R;
+import pl.skrzypekmichal.movementclassifier.RawDataCollector;
 import pl.skrzypekmichal.movementclassifier.enums.MovementType;
 import pl.skrzypekmichal.movementclassifier.sensor_data_collector.SettingsFragment;
 

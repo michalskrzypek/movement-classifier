@@ -24,12 +24,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.time.LocalDateTime;
+import org.joda.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import pl.skrzypekmichal.movementclassifier.R;
 import pl.skrzypekmichal.movementclassifier.HomeActivity;
+import pl.skrzypekmichal.movementclassifier.RawDataCollector;
 import pl.skrzypekmichal.movementclassifier.enums.MovementType;
 
 public class DataCollectorActivity extends AppCompatActivity implements SensorEventListener {
@@ -50,8 +52,7 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
     private Sensor sensorGyroscope;
     private DataRecorder dataRecorder;
 
-    private List<Float[]> accData;
-    private List<Float[]> gyroData;
+    private RawDataCollector rawDataCollector;
     private List<LocalDateTime> timestamps;
     private List<Sensor> registeredSensors;
 
@@ -64,13 +65,13 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
         initializeDrawerMenu();
         initializeNavigation();
 
-        accData = new ArrayList<>();
-        timestamps = new ArrayList<>();
         registeredSensors = new ArrayList<>();
+        rawDataCollector = new RawDataCollector();
+        timestamps = new ArrayList<>();
         dataRecorder = new DataRecorder();
     }
 
-    private void initializeDrawerMenu(){
+    private void initializeDrawerMenu() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -140,19 +141,12 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
     private void stopRecording() {
         saveData();
         makeToast("Data Saved!", Toast.LENGTH_SHORT);
-        clearSensorData();
         btnRecord.setText(R.string.start_button);
         btnRecord.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_start));
     }
 
     private void saveData() {
-        dataRecorder.saveData(username, timestamps, accData, chosenMovement);
-    }
-
-    private void clearSensorData() {
-        accData.clear();
-        gyroData.clear();
-        timestamps.clear();
+        dataRecorder.saveRawData(username, rawDataCollector, timestamps, chosenMovement);
     }
 
     private void makeToast(String msg, int length) {
@@ -214,11 +208,12 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
             int sensorType = event.sensor.getType();
             switch (sensorType) {
                 case Sensor.TYPE_LINEAR_ACCELERATION:
-                    Float[] record = {event.values[0], event.values[1], event.values[2]};
-                    accData.add(record);
-                    timestamps.add(LocalDateTime.now());
+                    LocalDateTime observationTime = rawDataCollector.addAccData(event.values);
+                    timestamps.add(observationTime);
                     break;
                 case Sensor.TYPE_GYROSCOPE:
+                    rawDataCollector.addGyroData(event.values);
+                    timestamps.add(LocalDateTime.now());
                     break;
             }
         }

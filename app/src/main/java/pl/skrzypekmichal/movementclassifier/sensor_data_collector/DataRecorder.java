@@ -5,22 +5,25 @@ import android.util.Log;
 
 import com.opencsv.CSVWriter;
 
+import org.joda.time.DateTimeFieldType;
+import org.joda.time.LocalDateTime;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import pl.skrzypekmichal.movementclassifier.RawDataCollector;
 import pl.skrzypekmichal.movementclassifier.enums.MovementType;
 
 public class DataRecorder {
 
     public static final String BASE_FILE_FORMAT = ".csv";
-    private static final String[] header = "username#date#time#acc_x#acc_y#acc_z#gyro_x#gyro_y#gyro_z#movement_type".split("#");
+    private static final String[] HEADER = "username#date#time#acc_x#acc_y#acc_z#gyro_x#gyro_y#gyro_z#movement_type".split("#");
 
-    public void saveData(String username,  List<LocalDateTime> timestamps, List<Float[]> sensorData, MovementType movementType) {
+    public void saveRawData(String username, RawDataCollector rawDataCollector, List<LocalDateTime> timestamps, MovementType movementType) {
         if (isExternalStorageWritable()) {
             File f;
             FileWriter fileWriter;
@@ -28,8 +31,8 @@ public class DataRecorder {
                 f = getFileToSave(username);
                 fileWriter = new FileWriter(f, false);
                 CSVWriter writer = new CSVWriter(fileWriter, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
-                writer.writeNext(header);
-                List<String[]> rows = getDataAsRows(username, timestamps, sensorData, movementType.getIndex());
+                writer.writeNext(HEADER);
+                List<String[]> rows = getDataAsRows(username, rawDataCollector, timestamps, movementType.getIndex());
                 writer.writeAll(rows);
                 writer.close();
             } catch (IOException e) {
@@ -64,21 +67,39 @@ public class DataRecorder {
     }
 
     private String getFileName(String username){
-        String currentDate = DateTimeFormatter.ofPattern("dd-MM-yyyy_HH:mm").format(LocalDateTime.now());
+        String currentDate = LocalDateTime.now().toString("dd-MM-yyyy_HH:mm");
         String fileName = currentDate + "_" + username + BASE_FILE_FORMAT;
         return fileName;
     }
 
-    private List<String[]> getDataAsRows(String username, List<LocalDateTime> timestamps, List<Float[]> sensorData, int movementType){
+    private List<String[]> getDataAsRows(String username, RawDataCollector rawDataCollector, List<LocalDateTime> timestamps, int movementType){
         List<String[]> rows = new ArrayList<>();
-        for (int i = 0; i<sensorData.size(); i++){
-            String day = timestamps.get(i).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            String time = timestamps.get(i).toLocalTime().toString();
-            String accX = String.valueOf(sensorData.get(i)[0]);
-            String accY = String.valueOf(sensorData.get(i)[1]);
-            String accZ = String.valueOf(sensorData.get(i)[2]);
+        int totalRowsOfData = timestamps.size();
+
+        for (int i = 0; i<totalRowsOfData; i++){
+            LocalDateTime timestamp = timestamps.get(i);
             String label = String.valueOf(movementType);
-            String[] row = {username, day, time, accX, accY, accZ, label};
+            String date = timestamps.get(i).toString();
+            String day = timestamps.get(i).toString("yyyy-MM-dd");
+            String time = timestamps.get(i).toLocalTime().toString();
+            String accX = "";
+            String accY = "";
+            String accZ = "";
+            String gyroX = "";
+            String gyroY = "";
+            String gyroZ = "";
+
+            if(rawDataCollector.getAccX().containsKey(timestamp)){
+                accX = String.valueOf(rawDataCollector.getAccX().get(timestamp));
+                accY = String.valueOf(rawDataCollector.getAccY().get(timestamp));
+                accZ = String.valueOf(rawDataCollector.getAccZ().get(timestamp));
+            } else if(rawDataCollector.getGyroX().containsKey(timestamp)){
+                gyroX = String.valueOf(rawDataCollector.getGyroX().get(timestamp));
+                gyroY = String.valueOf(rawDataCollector.getGyroY().get(timestamp));
+                gyroZ = String.valueOf(rawDataCollector.getGyroZ().get(timestamp));
+            }
+
+            String[] row = {username, date, day, time, accX, accY, accZ, gyroX, gyroY, gyroZ, label};
             rows.add(row);
         }
         return rows;

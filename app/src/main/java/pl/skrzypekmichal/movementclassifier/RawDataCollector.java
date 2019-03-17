@@ -1,4 +1,5 @@
-package pl.skrzypekmichal.movementclassifier.neural_network_models;
+package pl.skrzypekmichal.movementclassifier;
+
 
 import org.joda.time.LocalDateTime;
 
@@ -33,8 +34,21 @@ public class RawDataCollector {
         gyroZ = new LinkedHashMap<LocalDateTime, Float>();
     }
 
-    private void removeLastWindowData(int secondOfCurrentWindow) {
+    public List<Float> getWindowedValues(LinkedHashMap<LocalDateTime, Float> sensorData) {
+        List<Float> window = new ArrayList<>();
 
+        LocalDateTime firstObservationTime = Collections.min(sensorData.keySet());
+        int secondOfWindow = firstObservationTime.getSecondOfMinute();
+
+        List<LocalDateTime> timestamps = sensorData.keySet().stream()
+                .filter(ldt -> ldt.getSecondOfMinute() == secondOfWindow)
+                .sorted()
+                .collect(Collectors.toList());
+
+        for (int i = 0; i < timestamps.size(); i++) {
+            window.add(sensorData.get(timestamps.get(i)));
+        }
+        return window;
     }
 
     public void clearSensorData() {
@@ -46,18 +60,22 @@ public class RawDataCollector {
         gyroZ.clear();
     }
 
-    public void addAccData(float... values) {
+    public LocalDateTime addAccData(float... values) {
         LocalDateTime observationTime = LocalDateTime.now();
         accX.put(observationTime, values[0]);
         accY.put(observationTime, values[1]);
         accZ.put(observationTime, values[2]);
+
+        return observationTime;
     }
 
-    public void addGyroData(float... values) {
+    public LocalDateTime addGyroData(float... values) {
         LocalDateTime observationTime = LocalDateTime.now();
         gyroX.put(observationTime, values[0]);
         gyroY.put(observationTime, values[1]);
         gyroZ.put(observationTime, values[2]);
+
+        return observationTime;
     }
 
     //wystarczy że sprawdzimy dane z jednej płaszczyzny z kazdego sensora, bo zawsze dane sa dodawane do wszystkich plaszczyzn równocześnie
@@ -69,7 +87,6 @@ public class RawDataCollector {
         if(!sensorData.isEmpty()){
             LocalDateTime firstObservationTime = Collections.min(sensorData.keySet());
             LocalDateTime lastObservationTime = Collections.max(sensorData.keySet());
-
             long differenceInMilliseconds = lastObservationTime.toDate().getTime() - firstObservationTime.toDate().getTime();
             if (differenceInMilliseconds >= WINDOW_WIDTH_IN_SECONDS * 1000) {
                 return true;
@@ -102,22 +119,5 @@ public class RawDataCollector {
 
     public Map<LocalDateTime, Float> getGyroZ() {
         return gyroZ;
-    }
-
-    public List<Float> getWindowedValues(LinkedHashMap<LocalDateTime, Float> sensorData) {
-        List<Float> window = new ArrayList<>();
-
-        LocalDateTime firstObservationTime = Collections.min(sensorData.keySet());
-        int secondOfWindow = firstObservationTime.getSecondOfMinute();
-
-        List<LocalDateTime> timestamps = sensorData.keySet().stream()
-                .filter(ldt -> ldt.getSecondOfMinute() == secondOfWindow)
-                .sorted()
-                .collect(Collectors.toList());
-
-        for (int i = 0; i < timestamps.size(); i++) {
-            window.add(sensorData.get(timestamps.get(i)));
-        }
-        return window;
     }
 }
