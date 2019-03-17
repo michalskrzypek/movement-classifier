@@ -51,6 +51,20 @@ public class RawDataCollector {
         return window;
     }
 
+    public void removeFirstWindowData(LinkedHashMap<LocalDateTime, Float> sensorData){
+        LocalDateTime firstObservationTime = Collections.min(sensorData.keySet());
+        int secondOfWindow = firstObservationTime.getSecondOfMinute();
+
+        List<LocalDateTime> timestamps = sensorData.keySet().stream()
+                .filter(ldt -> ldt.getSecondOfMinute() == secondOfWindow)
+                .sorted()
+                .collect(Collectors.toList());
+
+        for (int i = 0; i < timestamps.size(); i++) {
+            sensorData.remove(timestamps.get(i));
+        }
+    }
+
     public void clearSensorData() {
         accX.clear();
         accY.clear();
@@ -60,22 +74,16 @@ public class RawDataCollector {
         gyroZ.clear();
     }
 
-    public LocalDateTime addAccData(float... values) {
-        LocalDateTime observationTime = LocalDateTime.now();
+    public void addAccData(LocalDateTime observationTime, float... values) {
         accX.put(observationTime, values[0]);
         accY.put(observationTime, values[1]);
         accZ.put(observationTime, values[2]);
-
-        return observationTime;
     }
 
-    public LocalDateTime addGyroData(float... values) {
-        LocalDateTime observationTime = LocalDateTime.now();
+    public void addGyroData(LocalDateTime observationTime, float... values) {
         gyroX.put(observationTime, values[0]);
         gyroY.put(observationTime, values[1]);
         gyroZ.put(observationTime, values[2]);
-
-        return observationTime;
     }
 
     //wystarczy że sprawdzimy dane z jednej płaszczyzny z kazdego sensora, bo zawsze dane sa dodawane do wszystkich plaszczyzn równocześnie

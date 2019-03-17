@@ -19,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.joda.time.LocalDateTime;
+
 
 import pl.skrzypekmichal.movementclassifier.HomeActivity;
 import pl.skrzypekmichal.movementclassifier.R;
@@ -179,14 +181,15 @@ public class ClassifierActivity extends AppCompatActivity implements SensorEvent
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+        LocalDateTime observationTime = LocalDateTime.now();
         if (collecting) {
             int sensorType = event.sensor.getType();
             switch (sensorType) {
                 case Sensor.TYPE_LINEAR_ACCELERATION:
-                    dataCollector.addAccData(event.values);
+                    dataCollector.addAccData(observationTime, event.values);
                     break;
                 case Sensor.TYPE_GYROSCOPE:
-                    dataCollector.addGyroData(event.values);
+                    dataCollector.addGyroData(observationTime, event.values);
                     break;
             }
 

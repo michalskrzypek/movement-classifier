@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,6 +28,7 @@ import android.widget.Toast;
 import org.joda.time.LocalDateTime;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import pl.skrzypekmichal.movementclassifier.R;
@@ -146,7 +148,7 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
     }
 
     private void saveData() {
-        dataRecorder.saveRawData(username, rawDataCollector, timestamps, chosenMovement);
+        dataRecorder.saveData(false, username, rawDataCollector, timestamps, chosenMovement);
     }
 
     private void makeToast(String msg, int length) {
@@ -204,16 +206,23 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+        LocalDateTime observationTime = LocalDateTime.now();
+
         if (collecting) {
+            if(!timestamps.contains(observationTime)){
+                timestamps.add(observationTime);
+            } else {
+                observationTime = timestamps.get(timestamps.size() - 1);
+            }
             int sensorType = event.sensor.getType();
             switch (sensorType) {
                 case Sensor.TYPE_LINEAR_ACCELERATION:
-                    LocalDateTime observationTime = rawDataCollector.addAccData(event.values);
-                    timestamps.add(observationTime);
+                    rawDataCollector.addAccData(observationTime, event.values);
+                    Log.d("ACC", "TIME: " + observationTime.toString() + " VALUES: " + Arrays.toString(event.values));
                     break;
                 case Sensor.TYPE_GYROSCOPE:
-                    rawDataCollector.addGyroData(event.values);
-                    timestamps.add(LocalDateTime.now());
+                    rawDataCollector.addGyroData(observationTime, event.values);
+                    Log.d("GYRO", "TIME: " + observationTime.toString() + " VALUES: " + Arrays.toString(event.values));
                     break;
             }
         }

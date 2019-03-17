@@ -5,34 +5,78 @@ import android.util.Log;
 
 import com.opencsv.CSVWriter;
 
-import org.joda.time.DateTimeFieldType;
 import org.joda.time.LocalDateTime;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import pl.skrzypekmichal.movementclassifier.RawDataCollector;
 import pl.skrzypekmichal.movementclassifier.enums.MovementType;
+import pl.skrzypekmichal.movementclassifier.neural_network_models.SingleRowData;
 
 public class DataRecorder {
 
     public static final String BASE_FILE_FORMAT = ".csv";
-    private static final String[] HEADER = "username#date#time#acc_x#acc_y#acc_z#gyro_x#gyro_y#gyro_z#movement_type".split("#");
+    private static final String[] HEADER_RAW_DATA = "username#date#time#acc_x#acc_y#acc_z#gyro_x#gyro_y#gyro_z#movement_type".split("#");
+    private static final String[] HEADER_PROCESSED_DATA = ("username#date#time#" +
+            "acc_x_avg#acc_x_median#acc_x_min#acc_x_max#acc_x_std#acc_x_rms#acc_x_mad" +
+            "acc_y_avg#acc_y_median#acc_y_min#acc_y_max#acc_y_std#acc_y_rms#acc_y_mad" +
+            "acc_z_avg#acc_z_median#acc_z_min#acc_z_max#acc_z_std#acc_z_rms#acc_z_mad" +
+            "gyro_x_avg#gyro_x_median#gyro_x_min#gyro_x_max#gyro_x_std#gyro_x_rms#gyro_x_mad" +
+            "gyro_y_avg#gyro_y_median#gyro_y_min#gyro_y_max#gyro_y_std#gyro_y_rms#gyro_y_mad" +
+            "gyro_z_avg#gyro_z_median#gyro_z_min#gyro_z_max#gyro_z_std#gyro_z_rms#gyro_z_mad" +
+            "movement_type").split("#");
 
-    public void saveRawData(String username, RawDataCollector rawDataCollector, List<LocalDateTime> timestamps, MovementType movementType) {
+    /*
+        private double median;
+    private double average;
+    private double min;
+    private double max;
+    private double std;
+    private double rootMeanSquare;
+    private double mad; //median absolute deviation
+     */
+
+    public void saveData(boolean isDataProcessed, String username, RawDataCollector rawDataCollector, List<LocalDateTime> timestamps, MovementType movementType) {
         if (isExternalStorageWritable()) {
             File f;
             FileWriter fileWriter;
             try {
-                f = getFileToSave(username);
+                f = getFileToSave(username, false);
                 fileWriter = new FileWriter(f, false);
                 CSVWriter writer = new CSVWriter(fileWriter, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
-                writer.writeNext(HEADER);
-                List<String[]> rows = getDataAsRows(username, rawDataCollector, timestamps, movementType.getIndex());
+                List<String[]> rows;
+
+                if (isDataProcessed) {
+                    writer.writeNext(HEADER_PROCESSED_DATA);
+                    rows = getProcessedDataAsRows(username, rawDataCollector, timestamps, movementType.getIndex());
+                } else {
+                    writer.writeNext(HEADER_RAW_DATA);
+                    rows = getRawDataAsRows(username, rawDataCollector, timestamps, movementType.getIndex());
+                }
+                writer.writeAll(rows);
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.d("UWAGA!", "NIE MOGE ZAPISAĆ");
+        }
+    }
+
+    private void saveProcessedData(String username, RawDataCollector rawDataCollector, List<LocalDateTime> timestamps, MovementType movementType) {
+        if (isExternalStorageWritable()) {
+            File f;
+            FileWriter fileWriter;
+            try {
+                f = getFileToSave(username, true);
+                fileWriter = new FileWriter(f, false);
+                CSVWriter writer = new CSVWriter(fileWriter, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
+                writer.writeNext(HEADER_PROCESSED_DATA);
+                List<String[]> rows = getRawDataAsRows(username, rawDataCollector, timestamps, movementType.getIndex());
                 writer.writeAll(rows);
                 writer.close();
             } catch (IOException e) {
@@ -52,8 +96,8 @@ public class DataRecorder {
         return false;
     }
 
-    private File getFileToSave(String username){
-        return new File(getPublicAlbumStorageDir(), getFileName(username));
+    private File getFileToSave(String username, boolean isDataProcessed) {
+        return new File(getPublicAlbumStorageDir(), getFileName(username, isDataProcessed));
     }
 
     private File getPublicAlbumStorageDir() {
@@ -66,22 +110,21 @@ public class DataRecorder {
         return file;
     }
 
-    private String getFileName(String username){
+    private String getFileName(String username, boolean isDataProcessed) {
         String currentDate = LocalDateTime.now().toString("dd-MM-yyyy_HH:mm");
         String fileName = currentDate + "_" + username + BASE_FILE_FORMAT;
         return fileName;
     }
 
-    private List<String[]> getDataAsRows(String username, RawDataCollector rawDataCollector, List<LocalDateTime> timestamps, int movementType){
+    private List<String[]> getRawDataAsRows(String username, RawDataCollector rawDataCollector, List<LocalDateTime> timestamps, int movementType) {
         List<String[]> rows = new ArrayList<>();
         int totalRowsOfData = timestamps.size();
 
-        for (int i = 0; i<totalRowsOfData; i++){
+        for (int i = 0; i < totalRowsOfData; i++) {
             LocalDateTime timestamp = timestamps.get(i);
             String label = String.valueOf(movementType);
-            String date = timestamps.get(i).toString();
-            String day = timestamps.get(i).toString("yyyy-MM-dd");
-            String time = timestamps.get(i).toLocalTime().toString();
+            String day = timestamp.toString("yyyy-MM-dd");
+            String time = timestamp.toLocalTime().toString();
             String accX = "";
             String accY = "";
             String accZ = "";
@@ -89,19 +132,33 @@ public class DataRecorder {
             String gyroY = "";
             String gyroZ = "";
 
-            if(rawDataCollector.getAccX().containsKey(timestamp)){
+            if (rawDataCollector.getAccX().containsKey(timestamp)) {
                 accX = String.valueOf(rawDataCollector.getAccX().get(timestamp));
                 accY = String.valueOf(rawDataCollector.getAccY().get(timestamp));
                 accZ = String.valueOf(rawDataCollector.getAccZ().get(timestamp));
-            } else if(rawDataCollector.getGyroX().containsKey(timestamp)){
+            }
+
+            if (rawDataCollector.getGyroX().containsKey(timestamp)) {
                 gyroX = String.valueOf(rawDataCollector.getGyroX().get(timestamp));
                 gyroY = String.valueOf(rawDataCollector.getGyroY().get(timestamp));
                 gyroZ = String.valueOf(rawDataCollector.getGyroZ().get(timestamp));
             }
 
-            String[] row = {username, date, day, time, accX, accY, accZ, gyroX, gyroY, gyroZ, label};
+            String[] row = {username, timestamp.toString(), day, time, accX, accY, accZ, gyroX, gyroY, gyroZ, label};
             rows.add(row);
         }
+
+        return rows;
+    }
+
+    private List<String[]> getProcessedDataAsRows(String username, RawDataCollector rawDataCollector, List<LocalDateTime> timestamps, int movementType) {
+        List<String[]> rows = new ArrayList<>();
+/*        while (true){
+            SingleRowData singleRowData = new SingleRowData(rawDataCollector);
+            rows.add(String.valueOf(singleRowData.getAccXFeatures().getAverage()));
+
+            String[] row = {};
+        }*/
         return rows;
     }
 }
