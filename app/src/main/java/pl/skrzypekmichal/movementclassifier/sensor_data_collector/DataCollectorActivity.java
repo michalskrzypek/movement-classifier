@@ -1,11 +1,13 @@
 package pl.skrzypekmichal.movementclassifier.sensor_data_collector;
 
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.skrzypekmichal.movementclassifier.R;
+import pl.skrzypekmichal.movementclassifier.HomeActivity;
 import pl.skrzypekmichal.movementclassifier.enums.MovementType;
 
 public class DataCollectorActivity extends AppCompatActivity implements SensorEventListener {
@@ -40,6 +43,7 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
     private Spinner spWalkType;
     private TextView tvSensors;
     private DrawerLayout drawer;
+    private NavigationView navigationView;
 
     private SensorManager sensorManager;
     private Sensor sensorAccelerometer;
@@ -47,6 +51,7 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
     private DataRecorder dataRecorder;
 
     private List<Float[]> accData;
+    private List<Float[]> gyroData;
     private List<LocalDateTime> timestamps;
     private List<Sensor> registeredSensors;
 
@@ -57,6 +62,8 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
         initializeView();
         initializeSensors();
         initializeDrawerMenu();
+        initializeNavigation();
+
         accData = new ArrayList<>();
         timestamps = new ArrayList<>();
         registeredSensors = new ArrayList<>();
@@ -105,6 +112,26 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
         sensorGyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
     }
 
+    private void initializeNavigation() {
+        navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(menuItem -> {
+            int id = menuItem.getItemId();
+            return onNavItemClick(id);
+        });
+    }
+
+    private boolean onNavItemClick(int itemId) {
+        switch (itemId) {
+            case R.id.nav_home:
+                Intent i = new Intent(this, HomeActivity.class);
+                finish();
+                startActivity(i);
+                break;
+        }
+        return true;
+    }
+
+
     private void startCollecting() {
         btnRecord.setText(R.string.stop_button);
         btnRecord.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_stop));
@@ -124,6 +151,7 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
 
     private void clearSensorData() {
         accData.clear();
+        gyroData.clear();
         timestamps.clear();
     }
 

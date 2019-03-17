@@ -2,7 +2,6 @@ package pl.skrzypekmichal.movementclassifier.neural_network_models;
 
 import java.util.LinkedHashMap;
 
-import pl.skrzypekmichal.movementclassifier.RawDataCollector;
 import pl.skrzypekmichal.movementclassifier.neural_network_models.features.SensorFeatures;
 import pl.skrzypekmichal.movementclassifier.neural_network_models.features.SensorFeaturesProcessor;
 

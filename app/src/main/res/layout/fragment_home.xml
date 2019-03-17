@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".WelcomeActivity">
+    android:id="@+id/home_layout"
+    android:background="@color/colorPrimaryLight">
 
     <TextView
         android:id="@+id/tv_app_title"
@@ -17,7 +18,8 @@
         android:text="@string/app_title"
         android:textAlignment="center"
         android:textAllCaps="true"
-        android:textSize="30sp"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="34sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.505"
@@ -29,12 +31,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="124dp"
+        android:layout_marginTop="84dp"
         android:layout_marginEnd="8dp"
+        android:background="@drawable/btn_default"
+        android:padding="7dp"
         android:text="@string/btn_classify_movement"
+        android:textColor="#FFF"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_app_title" />
+        app:layout_constraintTop_toBottomOf="@+id/img_logo" />
 
     <Button
         android:id="@+id/btn_collect_data"
@@ -44,11 +50,30 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="6dp"
+        android:background="@drawable/btn_default"
+        android:padding="7dp"
         android:text="@string/btn_collect_data"
+        android:textColor="#FFF"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_classifier"
         app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/img_logo"
+
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_app_title"
+        tools:srcCompat="@raw/icon_movement"
+        android:contentDescription="Application logo"
+        android:layout_width="130dp"
+        android:layout_height="140dp"
+        android:scaleType="fitXY"/>
 
 </android.support.constraint.ConstraintLayout>

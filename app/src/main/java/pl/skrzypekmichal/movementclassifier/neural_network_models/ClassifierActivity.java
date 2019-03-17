@@ -1,4 +1,4 @@
-package pl.skrzypekmichal.movementclassifier;
+package pl.skrzypekmichal.movementclassifier.neural_network_models;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,10 +20,10 @@ import android.widget.Toast;
 
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 
+import pl.skrzypekmichal.movementclassifier.HomeActivity;
+import pl.skrzypekmichal.movementclassifier.R;
 import pl.skrzypekmichal.movementclassifier.enums.MovementType;
-import pl.skrzypekmichal.movementclassifier.neural_network_models.KerasModelImporter;
-import pl.skrzypekmichal.movementclassifier.neural_network_models.MovementClassifier;
-import pl.skrzypekmichal.movementclassifier.neural_network_models.SingleRowData;
+import pl.skrzypekmichal.movementclassifier.sensor_data_collector.SettingsFragment;
 
 public class ClassifierActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -56,6 +56,12 @@ public class ClassifierActivity extends AppCompatActivity implements SensorEvent
         initializeNavigation();
 
         dataCollector = new RawDataCollector();
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new SettingsFragment()).commit();
+            navigationView.setCheckedItem(R.id.nav_home);
+        }
     }
 
 
@@ -82,11 +88,17 @@ public class ClassifierActivity extends AppCompatActivity implements SensorEvent
     private boolean onNavItemClick(int itemId) {
         switch (itemId) {
             case R.id.nav_home:
-                Intent i = new Intent(this, WelcomeActivity.class);
+                Intent i = new Intent(this, HomeActivity.class);
                 finish();
                 startActivity(i);
                 break;
+            case R.id.nav_settings:
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new SettingsFragment()).commit();
+                break;
         }
+
+        drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 

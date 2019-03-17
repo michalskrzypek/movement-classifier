@@ -18,7 +18,7 @@ import pl.skrzypekmichal.movementclassifier.enums.MovementType;
 public class DataRecorder {
 
     public static final String BASE_FILE_FORMAT = ".csv";
-    private static final String[] header = "username#date#time#acc_x#acc_y#acc_z#movement_type".split("#");
+    private static final String[] header = "username#date#time#acc_x#acc_y#acc_z#gyro_x#gyro_y#gyro_z#movement_type".split("#");
 
     public void saveData(String username,  List<LocalDateTime> timestamps, List<Float[]> sensorData, MovementType movementType) {
         if (isExternalStorageWritable()) {

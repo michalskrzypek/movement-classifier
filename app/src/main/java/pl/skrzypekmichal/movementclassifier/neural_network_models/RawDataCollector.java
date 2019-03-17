@@ -1,4 +1,4 @@
-package pl.skrzypekmichal.movementclassifier;
+package pl.skrzypekmichal.movementclassifier.neural_network_models;
 
 import org.joda.time.LocalDateTime;
 
