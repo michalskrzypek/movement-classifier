@@ -17,7 +17,6 @@ import java.util.List;
 import pl.skrzypekmichal.movementclassifier.RawDataCollector;
 import pl.skrzypekmichal.movementclassifier.enums.MovementType;
 import pl.skrzypekmichal.movementclassifier.neural_network_models.SingleRowData;
-import pl.skrzypekmichal.movementclassifier.neural_network_models.features.SensorFeatures;
 
 public class DataRecorder {
 
@@ -138,12 +137,12 @@ public class DataRecorder {
 
         for (int row = 0; row < processedData.size(); row++) {
             SingleRowData singleRowData = processedData.get(row);
-            String[] accXData = getSensorFeaturesAsArray(singleRowData.getAccXFeatures());
-            String[] accYData = getSensorFeaturesAsArray(singleRowData.getAccYFeatures());
-            String[] accZData = getSensorFeaturesAsArray(singleRowData.getAccZFeatures());
-            String[] gyroXData = getSensorFeaturesAsArray(singleRowData.getGyroXFeatures());
-            String[] gyroYData = getSensorFeaturesAsArray(singleRowData.getGyroYFeatures());
-            String[] gyroZData = getSensorFeaturesAsArray(singleRowData.getGyroZFeatures());
+            String[] accXData = (singleRowData.getAccXFeatures().getFeaturesAsArray());
+            String[] accYData = (singleRowData.getAccYFeatures().getFeaturesAsArray());
+            String[] accZData = (singleRowData.getAccZFeatures().getFeaturesAsArray());
+            String[] gyroXData = (singleRowData.getGyroXFeatures().getFeaturesAsArray());
+            String[] gyroYData = (singleRowData.getGyroYFeatures().getFeaturesAsArray());
+            String[] gyroZData = (singleRowData.getGyroZFeatures().getFeaturesAsArray());
 
             List<String> featureList = new ArrayList<>();
             featureList.add(username);
@@ -160,17 +159,5 @@ public class DataRecorder {
         }
 
         return rows;
-    }
-
-    private String[] getSensorFeaturesAsArray(SensorFeatures sensorFeatures) {
-        String avg = String.valueOf(sensorFeatures.getAverage());
-        String median = String.valueOf(sensorFeatures.getMedian());
-        String min = String.valueOf(sensorFeatures.getMin());
-        String max = String.valueOf(sensorFeatures.getMax());
-        String std = String.valueOf(sensorFeatures.getStd());
-        String rms = String.valueOf(sensorFeatures.getRootMeanSquare());
-        String mad = String.valueOf(sensorFeatures.getMad());
-
-        return new String[]{avg, median, min, max, std, rms, mad};
     }
 }

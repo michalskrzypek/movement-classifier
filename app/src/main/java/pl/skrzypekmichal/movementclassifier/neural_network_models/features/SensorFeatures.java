@@ -20,6 +20,18 @@ public class SensorFeatures {
         this.mad = builder.mad;
     }
 
+    public String[] getFeaturesAsArray() {
+        String avg = String.valueOf(getAverage());
+        String median = String.valueOf(getMedian());
+        String min = String.valueOf(getMin());
+        String max = String.valueOf(getMax());
+        String std = String.valueOf(getStd());
+        String rms = String.valueOf(getRootMeanSquare());
+        String mad = String.valueOf(getMad());
+
+        return new String[]{avg, median, min, max, std, rms, mad};
+    }
+
     public double getMedian() {
         return median;
     }
@@ -115,12 +127,12 @@ public class SensorFeatures {
             return this;
         }
 
-        public Builder rootMeanSquare(double rootMeanSquare){
+        public Builder rootMeanSquare(double rootMeanSquare) {
             this.rootMeanSquare = rootMeanSquare;
             return this;
         }
 
-        public Builder mad(double mad){
+        public Builder mad(double mad) {
             this.mad = mad;
             return this;
         }
