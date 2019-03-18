@@ -30,6 +30,10 @@ public class DataRecorder {
             "gyro_y_avg#gyro_y_median#gyro_y_min#gyro_y_max#gyro_y_std#gyro_y_rms#gyro_y_mad#" +
             "gyro_z_avg#gyro_z_median#gyro_z_min#gyro_z_max#gyro_z_std#gyro_z_rms#gyro_z_mad#" +
             "movement_type").split("#");
+    private static final String FOLDER_RAW_DATA = "raw_sensor_data";
+    private static final String FOLDER_PROCESSED_DATA = "processed_sensor_data";
+
+
 
     public void saveRawData(String username, RawDataCollector rawDataCollector, List<LocalDateTime> timestamps, MovementType movementType) {
         List<String[]> rows = getRawDataAsRows(username, rawDataCollector, timestamps, movementType.getIndex());
@@ -70,13 +74,18 @@ public class DataRecorder {
     }
 
     private File getFileToSave(String username, boolean isDataProcessed) {
-        return new File(getPublicAlbumStorageDir(), getFileName(username, isDataProcessed));
+        return new File(getPublicAlbumStorageDir(isDataProcessed), getFileName(username, isDataProcessed));
     }
 
-    private File getPublicAlbumStorageDir() {
+    private File getPublicAlbumStorageDir(boolean isDataProcessed) {
+        String dir = FOLDER_RAW_DATA;
+        if(isDataProcessed){
+            dir = FOLDER_PROCESSED_DATA;
+        }
+
         // Get the directory for the user's public documents directory.
         File file = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOCUMENTS), "sensor_data");
+                Environment.DIRECTORY_DOCUMENTS), dir);
         if (!file.mkdirs()) {
             file.mkdir();
         }
@@ -88,9 +97,9 @@ public class DataRecorder {
         String fileName = "";
 
         if(isDataProcessed){
-            fileName = "PROCESSED_" + currentDate + "_" + username + BASE_FILE_FORMAT;
+            fileName = "Processed" + currentDate + "_" + username + BASE_FILE_FORMAT;
         } else {
-            fileName = currentDate + "_" + username + BASE_FILE_FORMAT;
+            fileName = "Raw_" + currentDate + "_" + username + BASE_FILE_FORMAT;
         }
 
         return fileName;
