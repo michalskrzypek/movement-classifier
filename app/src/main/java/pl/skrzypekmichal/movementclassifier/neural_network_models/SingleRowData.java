@@ -1,12 +1,11 @@
 package pl.skrzypekmichal.movementclassifier.neural_network_models;
 
-import org.joda.time.LocalDateTime;
-
-import java.util.LinkedHashMap;
+import java.util.List;
 
 import pl.skrzypekmichal.movementclassifier.RawDataCollector;
 import pl.skrzypekmichal.movementclassifier.neural_network_models.features.SensorFeatures;
 import pl.skrzypekmichal.movementclassifier.neural_network_models.features.SensorFeaturesProcessor;
+import pl.skrzypekmichal.movementclassifier.sensor_data_collector.RawDataProcessor;
 
 public class SingleRowData {
 
@@ -18,12 +17,20 @@ public class SingleRowData {
     private SensorFeatures gyroZFeatures;
 
     public SingleRowData(RawDataCollector rawDataCollector){
-        accXFeatures = SensorFeaturesProcessor.calculateSensorFeatures(rawDataCollector.getWindowedValues((LinkedHashMap<LocalDateTime, Float>) rawDataCollector.getAccX()));
-        accYFeatures = SensorFeaturesProcessor.calculateSensorFeatures(rawDataCollector.getWindowedValues((LinkedHashMap<LocalDateTime, Float>) rawDataCollector.getAccY()));
-        accZFeatures = SensorFeaturesProcessor.calculateSensorFeatures(rawDataCollector.getWindowedValues((LinkedHashMap<LocalDateTime, Float>) rawDataCollector.getAccZ()));
-        gyroXFeatures = SensorFeaturesProcessor.calculateSensorFeatures(rawDataCollector.getWindowedValues((LinkedHashMap<LocalDateTime, Float>) rawDataCollector.getGyroX()));
-        gyroYFeatures= SensorFeaturesProcessor.calculateSensorFeatures(rawDataCollector.getWindowedValues((LinkedHashMap<LocalDateTime, Float>) rawDataCollector.getGyroY()));
-        gyroZFeatures = SensorFeaturesProcessor.calculateSensorFeatures(rawDataCollector.getWindowedValues((LinkedHashMap<LocalDateTime, Float>) rawDataCollector.getGyroZ()));
+        RawDataProcessor rawDataProcessor = new RawDataProcessor(rawDataCollector);
+        List<Float> accXWindowData = rawDataProcessor.getFirstWindowData(rawDataCollector.getAccX());
+        List<Float> accYWindowData = rawDataProcessor.getFirstWindowData(rawDataCollector.getAccY());
+        List<Float> accZWindowData = rawDataProcessor.getFirstWindowData(rawDataCollector.getAccZ());
+        List<Float> gyroXWindowData = rawDataProcessor.getFirstWindowData(rawDataCollector.getGyroX());
+        List<Float> gyroYWindowData = rawDataProcessor.getFirstWindowData(rawDataCollector.getGyroY());
+        List<Float> gyroZWindowData = rawDataProcessor.getFirstWindowData(rawDataCollector.getGyroZ());
+
+        accXFeatures = SensorFeaturesProcessor.calculateSensorFeatures(accXWindowData);
+        accYFeatures = SensorFeaturesProcessor.calculateSensorFeatures(accYWindowData);
+        accZFeatures = SensorFeaturesProcessor.calculateSensorFeatures(accZWindowData);
+        gyroXFeatures = SensorFeaturesProcessor.calculateSensorFeatures(gyroXWindowData);
+        gyroYFeatures= SensorFeaturesProcessor.calculateSensorFeatures(gyroYWindowData);
+        gyroZFeatures = SensorFeaturesProcessor.calculateSensorFeatures(gyroZWindowData);
     }
 
     public SingleRowData(SensorFeatures accXFeatures, SensorFeatures accYFeatures, SensorFeatures accZFeatures,

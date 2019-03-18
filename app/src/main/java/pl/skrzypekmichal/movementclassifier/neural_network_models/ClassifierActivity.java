@@ -22,7 +22,6 @@ import android.widget.Toast;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.joda.time.LocalDateTime;
 
-
 import java.util.Arrays;
 
 import pl.skrzypekmichal.movementclassifier.HomeActivity;

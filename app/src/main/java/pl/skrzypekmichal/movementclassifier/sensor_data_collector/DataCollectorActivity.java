@@ -33,10 +33,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import pl.skrzypekmichal.movementclassifier.R;
 import pl.skrzypekmichal.movementclassifier.HomeActivity;
+import pl.skrzypekmichal.movementclassifier.R;
 import pl.skrzypekmichal.movementclassifier.RawDataCollector;
 import pl.skrzypekmichal.movementclassifier.enums.MovementType;
+import pl.skrzypekmichal.movementclassifier.neural_network_models.SingleRowData;
 
 public class DataCollectorActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -150,7 +151,8 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
     }
 
     private void stopRecording() {
-        saveData();
+        saveRawData();
+        saveProcessedData();
 
         makeToast("Data Saved!", Toast.LENGTH_SHORT);
         pbCollecting.setVisibility(ProgressBar.INVISIBLE);
@@ -160,8 +162,20 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
         spWalkType.setEnabled(true);
     }
 
-    private void saveData() {
-        dataRecorder.saveData(false, username, rawDataCollector, timestamps, chosenMovement);
+    /**
+     * TODO tu odpale drugi wątek (w tle)
+     */
+    private void saveRawData() {
+        dataRecorder.saveRawData(username, rawDataCollector, timestamps, chosenMovement);
+    }
+
+    /**
+     * TODO tu odpale drugi wątek (w tle)
+     */
+    private void saveProcessedData() {
+        RawDataProcessor rawDataProcessor = new RawDataProcessor(rawDataCollector);
+        List<SingleRowData> processedData = rawDataProcessor.getProcessedData();
+        dataRecorder.saveProcessedData(username, processedData, chosenMovement);
     }
 
     private void makeToast(String msg, int length) {
@@ -227,6 +241,7 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
             } else {
                 observationTime = timestamps.get(timestamps.size() - 1);
             }
+
             int sensorType = event.sensor.getType();
             switch (sensorType) {
                 case Sensor.TYPE_LINEAR_ACCELERATION:

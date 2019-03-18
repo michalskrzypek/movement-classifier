@@ -3,13 +3,9 @@ package pl.skrzypekmichal.movementclassifier;
 
 import org.joda.time.LocalDateTime;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Collects and stores raw sensor data along with timestamp of each collection
@@ -26,60 +22,12 @@ public class RawDataCollector {
     private Map<LocalDateTime, Float> gyroZ;
 
     public RawDataCollector() {
-        accX = new LinkedHashMap<LocalDateTime, Float>();
-        accY = new LinkedHashMap<LocalDateTime, Float>();
-        accZ = new LinkedHashMap<LocalDateTime, Float>();
-        gyroX = new LinkedHashMap<LocalDateTime, Float>();
-        gyroY = new LinkedHashMap<LocalDateTime, Float>();
-        gyroZ = new LinkedHashMap<LocalDateTime, Float>();
-    }
-
-    public List<Float> getWindowedValues(LinkedHashMap<LocalDateTime, Float> sensorData) {
-        List<Float> window = new ArrayList<>();
-
-        LocalDateTime firstObservationTime = Collections.min(sensorData.keySet());
-        int secondOfWindow = firstObservationTime.getSecondOfMinute();
-
-        List<LocalDateTime> timestamps = sensorData.keySet().stream()
-                .filter(ldt -> ldt.getSecondOfMinute() == secondOfWindow)
-                .sorted()
-                .collect(Collectors.toList());
-
-        for (int i = 0; i < timestamps.size(); i++) {
-            window.add(sensorData.get(timestamps.get(i)));
-        }
-        return window;
-    }
-
-  /*  public List<Float> getWindowedValuesFromSecond(LinkedHashMap<LocalDateTime, Float> sensorData) {
-        List<Float> window = new ArrayList<>();
-
-        LocalDateTime firstObservationTime = Collections.min(sensorData.keySet());
-        int secondOfWindow = firstObservationTime.getSecondOfMinute();
-firstObservationTime.get
-        List<LocalDateTime> timestamps = sensorData.keySet().stream()
-                .filter(ldt -> ldt.getSecondOfMinute() == secondOfWindow)
-                .sorted()
-                .collect(Collectors.toList());
-
-        for (int i = 0; i < timestamps.size(); i++) {
-            window.add(sensorData.get(timestamps.get(i)));
-        }
-        return window;
-    }*/
-
-    public void removeFirstWindowData(LinkedHashMap<LocalDateTime, Float> sensorData){
-        LocalDateTime firstObservationTime = Collections.min(sensorData.keySet());
-        int secondOfWindow = firstObservationTime.getSecondOfMinute();
-
-        List<LocalDateTime> timestamps = sensorData.keySet().stream()
-                .filter(ldt -> ldt.getSecondOfMinute() == secondOfWindow)
-                .sorted()
-                .collect(Collectors.toList());
-
-        for (int i = 0; i < timestamps.size(); i++) {
-            sensorData.remove(timestamps.get(i));
-        }
+        accX = new LinkedHashMap<>();
+        accY = new LinkedHashMap<>();
+        accZ = new LinkedHashMap<>();
+        gyroX = new LinkedHashMap<>();
+        gyroY = new LinkedHashMap<>();
+        gyroZ = new LinkedHashMap<>();
     }
 
     public void clearSensorData() {
@@ -89,6 +37,10 @@ firstObservationTime.get
         gyroX.clear();
         gyroY.clear();
         gyroZ.clear();
+    }
+
+    public boolean isEmpty(){
+        return accX.isEmpty() && accY.isEmpty() && accZ.isEmpty() && gyroX.isEmpty() && gyroY.isEmpty() && gyroX.isEmpty();
     }
 
     public void addAccData(LocalDateTime observationTime, float... values) {
