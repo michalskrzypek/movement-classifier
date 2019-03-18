@@ -19,7 +19,7 @@
     <string name="acc_z">Z : %1$.2f</string>
     <string name="label_gyro">Gyroscope Sensor: %1$.2f</string>
 
-    <string name="movement_prompt">Wybierz rodzaj ruchu:</string>
+    <string name="movement_prompt">Select movement type:</string>
 
     <string name="start_button">Start</string>
     <string name="stop_button">Stop</string>

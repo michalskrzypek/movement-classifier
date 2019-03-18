@@ -2,8 +2,8 @@ package pl.skrzypekmichal.movementclassifier.enums;
 
 public enum MovementType {
 
-    LAYING(0, "Leżenie"), SITTING(1, "Siedzenie"), STANDING(2, "Stanie"), WALKING(3, "Chód"), WALKING_DOWNSTAIRS(4, "Schody w dół"), WALKING_UPSTAIRS(5, "Schody w górę"), UNKNOWN(-1, "Ruch nierozpoznany");
-    /*RUNNING(2, "Bieg"), CYCLING(3, "Jazda rowerem"), TRAM(4, "Jazda tramwajem");*/
+    LAYING(0, "Laying"), SITTING(1, "Sitting"), STANDING(2, "Standing"), WALKING(3, "Walking"),
+    WALKING_DOWNSTAIRS(4, "Walking downstairs"), WALKING_UPSTAIRS(5, "Walking upstairs"), UNKNOWN(-1, "Unknown movement");
 
     private int index;
     private String type;

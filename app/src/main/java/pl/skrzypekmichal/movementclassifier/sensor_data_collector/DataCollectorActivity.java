@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +47,7 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
     private EditText et_username;
     private Button btnRecord;
     private Spinner spWalkType;
+    private ProgressBar pbCollecting;
     private TextView tvSensors;
     private DrawerLayout drawer;
     private NavigationView navigationView;
@@ -109,6 +111,8 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
         spWalkType.setOnItemSelectedListener(new SpinnerListener());
 
         tvSensors = findViewById(R.id.sensor_list);
+        pbCollecting = findViewById(R.id.pb_collecting);
+        pbCollecting.setVisibility(ProgressBar.INVISIBLE);
     }
 
     private void initializeSensors() {
@@ -141,15 +145,19 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
         btnRecord.setText(R.string.stop_button);
         btnRecord.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_stop));
         et_username.setEnabled(false);
+        pbCollecting.setVisibility(ProgressBar.VISIBLE);
+        spWalkType.setEnabled(false);
     }
 
     private void stopRecording() {
         saveData();
 
         makeToast("Data Saved!", Toast.LENGTH_SHORT);
+        pbCollecting.setVisibility(ProgressBar.INVISIBLE);
         btnRecord.setText(R.string.start_button);
         btnRecord.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_start));
         et_username.setEnabled(true);
+        spWalkType.setEnabled(true);
     }
 
     private void saveData() {
@@ -214,7 +222,7 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
         LocalDateTime observationTime = LocalDateTime.now();
 
         if (collecting) {
-            if(!timestamps.contains(observationTime)){
+            if (!timestamps.contains(observationTime)) {
                 timestamps.add(observationTime);
             } else {
                 observationTime = timestamps.get(timestamps.size() - 1);
