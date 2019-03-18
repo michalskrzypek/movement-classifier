@@ -51,6 +51,23 @@ public class RawDataCollector {
         return window;
     }
 
+  /*  public List<Float> getWindowedValuesFromSecond(LinkedHashMap<LocalDateTime, Float> sensorData) {
+        List<Float> window = new ArrayList<>();
+
+        LocalDateTime firstObservationTime = Collections.min(sensorData.keySet());
+        int secondOfWindow = firstObservationTime.getSecondOfMinute();
+firstObservationTime.get
+        List<LocalDateTime> timestamps = sensorData.keySet().stream()
+                .filter(ldt -> ldt.getSecondOfMinute() == secondOfWindow)
+                .sorted()
+                .collect(Collectors.toList());
+
+        for (int i = 0; i < timestamps.size(); i++) {
+            window.add(sensorData.get(timestamps.get(i)));
+        }
+        return window;
+    }*/
+
     public void removeFirstWindowData(LinkedHashMap<LocalDateTime, Float> sensorData){
         LocalDateTime firstObservationTime = Collections.min(sensorData.keySet());
         int secondOfWindow = firstObservationTime.getSecondOfMinute();

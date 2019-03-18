@@ -17,6 +17,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -94,6 +95,7 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
                     collecting = !collecting;
                     if (collecting) {
                         startCollecting();
+                        hideKeyboard();
                     } else {
                         stopRecording();
                     }
@@ -138,13 +140,16 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
     private void startCollecting() {
         btnRecord.setText(R.string.stop_button);
         btnRecord.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_stop));
+        et_username.setEnabled(false);
     }
 
     private void stopRecording() {
         saveData();
+
         makeToast("Data Saved!", Toast.LENGTH_SHORT);
         btnRecord.setText(R.string.start_button);
         btnRecord.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_start));
+        et_username.setEnabled(true);
     }
 
     private void saveData() {
@@ -239,11 +244,24 @@ public class DataCollectorActivity extends AppCompatActivity implements SensorEv
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             chosenMovement = (MovementType) parent.getItemAtPosition(position);
             Toast.makeText(parent.getContext(), "Wybrano: " + chosenMovement.getType().toLowerCase(), Toast.LENGTH_SHORT).show();
+            hideKeyboard();
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
+            hideKeyboard();
         }
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(this);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     private TextWatcher usernameTextWatcher = new TextWatcher() {

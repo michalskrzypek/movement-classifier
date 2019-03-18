@@ -14,6 +14,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +22,8 @@ import android.widget.Toast;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.joda.time.LocalDateTime;
 
+
+import java.util.Arrays;
 
 import pl.skrzypekmichal.movementclassifier.HomeActivity;
 import pl.skrzypekmichal.movementclassifier.R;
@@ -59,12 +62,6 @@ public class ClassifierActivity extends AppCompatActivity implements SensorEvent
         initializeNavigation();
 
         dataCollector = new RawDataCollector();
-
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new SettingsFragment()).commit();
-            navigationView.setCheckedItem(R.id.nav_home);
-        }
     }
 
 
@@ -187,9 +184,11 @@ public class ClassifierActivity extends AppCompatActivity implements SensorEvent
             switch (sensorType) {
                 case Sensor.TYPE_LINEAR_ACCELERATION:
                     dataCollector.addAccData(observationTime, event.values);
+                    Log.d("COLLECTING", "onSensorChanged: " + Arrays.toString(event.values));
                     break;
                 case Sensor.TYPE_GYROSCOPE:
                     dataCollector.addGyroData(observationTime, event.values);
+                    Log.d("COLLECTING", "onSensorChanged: " + Arrays.toString(event.values));
                     break;
             }
 
