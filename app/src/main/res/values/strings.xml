@@ -30,4 +30,5 @@
     <string name="nav_home_page">Home page</string>
     <string name="email">skrzypekmichal@yahoo.com</string>
     <string name="title_original">Movement Classifier ®</string>
+    <string name="home_question">What do you want to do?</string>
 </resources>

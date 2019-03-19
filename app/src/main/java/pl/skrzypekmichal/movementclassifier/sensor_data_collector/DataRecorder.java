@@ -97,7 +97,7 @@ public class DataRecorder {
         String fileName = "";
 
         if(isDataProcessed){
-            fileName = "Processed" + currentDate + "_" + username + BASE_FILE_FORMAT;
+            fileName = "Processed_" + currentDate + "_" + username + BASE_FILE_FORMAT;
         } else {
             fileName = "Raw_" + currentDate + "_" + username + BASE_FILE_FORMAT;
         }

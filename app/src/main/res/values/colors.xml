@@ -10,5 +10,5 @@
     <color name="divider">#BDBDBD</color>
     <color name="btn_start">#FFC107</color>
     <color name="btn_start_disabled">#5e5e5e</color>
-    <color name="btn_stop">#E64A19</color>
+    <color name="btn_stop">#e64a19</color>
 </resources>
